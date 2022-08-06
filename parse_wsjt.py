@@ -42,6 +42,18 @@ def call2loc(call):
             results += one_result + '. '
     return results
 
+def flag_str(line, loc, grid='EM', coords=[2,7,5,8], state='MT'):
+    """make a 3-char string to say whether grid, coords, state are of interest."""
+    output = "   "
+    loc_state = loc.split()[1]
+    if grid_matches(line, grid):
+        output[0] = 'G'
+    if coords_match(line, coords[0], coords[1], coords[2], coords[3]):
+        output[1] = 'C'
+    if loc_state == state:
+        output[2] = 'S'
+    return output
+
 def tail_once(n_lines=100):
     with open('/Users/ajz/Library/Application Support/WSJT-X/ALL.TXT') as fh:
         all_lines = fh.readlines()
