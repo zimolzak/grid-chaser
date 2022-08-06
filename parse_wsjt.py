@@ -46,11 +46,12 @@ def tail_once(n_lines=100):
     with open('/Users/ajz/Library/Application Support/WSJT-X/ALL.TXT') as fh:
         all_lines = fh.readlines()
         tail = all_lines[(-1 * n_lines):]
+        max_len = max([len(s) for s in tail])
         for line in tail:
             if grid_matches(line, 'EM'):
                 call_sign = extract_call_sign(line)
                 loc = call2loc(call_sign)
-                print(call_sign, loc, line, end='')
+                print(line.rstrip().ljust(max_len + 1), loc)
                 if coords_match(line, 2, 7, 5, 8):  # 2~7 and 5~8 are montana
                     print(' ' * 4, '^' * 60)
 
