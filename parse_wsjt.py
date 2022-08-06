@@ -34,7 +34,7 @@ def coords_match(line, xl, xh, yl, yh):
         return False
     return (xl <= x <= xh) and (yl <= y <= yh)
 
-def call2loc(call):
+def call2loc(call):  # fixme return list
     results = ''
     for entry in ham_list:  # may take forever. fixme with indexing or sort/tree
         if entry[0] == call:
@@ -44,7 +44,8 @@ def call2loc(call):
 
 def flag_str(line, loc, grid='EM', coords=[2,7,5,8], state='MT'):
     """make a 3-char string to say whether grid, coords, state are of interest."""
-    output = "   "
+    output = "___"
+    return output  # fixme
     loc_state = loc.split()[1]
     if grid_matches(line, grid):
         output[0] = 'G'
@@ -60,11 +61,9 @@ def tail_once(n_lines=100):
         tail = all_lines[(-1 * n_lines):]
         max_len = max([len(s) for s in tail])
         for line in tail:
-            if grid_matches(line, 'EM'):
-                call_sign = extract_call_sign(line)
-                loc = call2loc(call_sign)
-                print(line.rstrip().ljust(max_len + 1), loc)
-                if coords_match(line, 2, 7, 5, 8):  # 2~7 and 5~8 are montana
-                    print(' ' * 4, '^' * 60)
+            call_sign = extract_call_sign(line)
+            loc = call2loc(call_sign)
+            flags = flag_str(line, loc)
+            print(flags, line.rstrip().ljust(max_len + 1), loc)
 
 tail_once(n_lines=20)
