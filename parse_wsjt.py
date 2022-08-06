@@ -6,6 +6,10 @@ print('loading db')
 from make_short_db import ham_list
 print('done')
 
+GRID = 'DN'
+COORDS = [2,7,5,8]
+STATE = 'AK'
+
 def extract_message_word(line, word_num, column_num_of_message=48):
     message = line[column_num_of_message:]
     words = message.split()
@@ -43,8 +47,10 @@ def call2loc(call):
             results += entry[1:]  # just "flat" list of [city,state,zip,city,state,zip,city,...]
     return results
 
-def flag_str(line, loc, grid='EM', coords=[2,7,5,8], state='MT'):
-    """make a 3-char string to say whether grid, coords, state are of interest."""
+def flag_str(line, loc, grid, coords, state):
+    """Make a 3-char string to say whether grid, coords, and state are of
+    interest.
+    """
     output = ['_']*3
     if len(loc) < 2:  # probably call is non-US and not in DB
         loc_state  = None
@@ -58,7 +64,7 @@ def flag_str(line, loc, grid='EM', coords=[2,7,5,8], state='MT'):
         output[2] = 'S'
     return ''.join(output)
 
-def tail_once(n_lines=100):
+def tail_once(n_lines, grid, coords, state):
     text_block = ''
     with open('/Users/ajz/Library/Application Support/WSJT-X/ALL.TXT') as fh:
         all_lines = fh.readlines()
@@ -67,11 +73,14 @@ def tail_once(n_lines=100):
         for line in tail:
             call_sign = extract_call_sign(line)
             loc = call2loc(call_sign)
-            flags = flag_str(line, loc)
-            text_block += flags + ' ' + line.rstrip().ljust(max_len + 1) + str(loc) + '\n'
+            flags = flag_str(line, loc, grid, coords, state)
+            text_block += \
+                flags + ' ' + \
+                line.rstrip().ljust(max_len + 1) + \
+                str(loc) + '\n'
     text_block += '\n'
     return text_block
 
 while True:
-    print(tail_once(n_lines=20))
+    print(tail_once(20, GRID, COORDS, STATE))
     sleep(2)
