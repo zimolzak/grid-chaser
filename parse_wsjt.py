@@ -1,5 +1,6 @@
-# usage is something like:
-# watch -n 14 python parse_wsjt.py
+# usage: python parse_wsjt.py
+
+from time import sleep
 
 print('loading db')
 from make_short_db import ham_list
@@ -17,7 +18,7 @@ def extract_call_sign(line):
     # fixme "CQ POTA" breaks word counting
     return extract_message_word(line, 1)
 
-def grid_matches(line, digraph_sought='DN'):
+def grid_matches(line, digraph_sought):
     if digraph_sought == 'any' or digraph_sought == 'all':
         return True
     grid = extract_grid(line)
@@ -67,5 +68,8 @@ def tail_once(n_lines=100):
             loc = call2loc(call_sign)
             flags = flag_str(line, loc)
             print(flags, line.rstrip().ljust(max_len + 1), loc)
+    print()
 
-tail_once(n_lines=20)
+while True:
+    tail_once(n_lines=20)
+    sleep(2)
