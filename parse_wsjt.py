@@ -14,6 +14,7 @@ def extract_grid(line):
     return extract_message_word(line, -1)
 
 def extract_call_sign(line):
+    # fixme "CQ POTA" breaks word counting
     return extract_message_word(line, 1)
 
 def grid_matches(line, digraph_sought='DN'):
@@ -34,26 +35,27 @@ def coords_match(line, xl, xh, yl, yh):
         return False
     return (xl <= x <= xh) and (yl <= y <= yh)
 
-def call2loc(call):  # fixme return list
-    results = ''
+def call2loc(call):
+    results = []
     for entry in ham_list:  # may take forever. fixme with indexing or sort/tree
         if entry[0] == call:
-            one_result = ' '.join(entry[1:])
-            results += one_result + '. '
+            results += entry[1:]  # just "flat" list of [city,state,zip,city,state,zip,city,...]
     return results
 
 def flag_str(line, loc, grid='EM', coords=[2,7,5,8], state='MT'):
     """make a 3-char string to say whether grid, coords, state are of interest."""
-    output = "___"
-    return output  # fixme
-    loc_state = loc.split()[1]
+    output = ['_']*3
+    if len(loc) < 2:  # probably call is non-US and not in DB
+        loc_state  = None
+    else:
+        loc_state = loc[1]  # assumes just 1st state is accurate
     if grid_matches(line, grid):
         output[0] = 'G'
     if coords_match(line, coords[0], coords[1], coords[2], coords[3]):
         output[1] = 'C'
     if loc_state == state:
         output[2] = 'S'
-    return output
+    return ''.join(output)
 
 def tail_once(n_lines=100):
     with open('/Users/ajz/Library/Application Support/WSJT-X/ALL.TXT') as fh:
