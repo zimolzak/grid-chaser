@@ -59,6 +59,7 @@ def flag_str(line, loc, grid='EM', coords=[2,7,5,8], state='MT'):
     return ''.join(output)
 
 def tail_once(n_lines=100):
+    text_block = ''
     with open('/Users/ajz/Library/Application Support/WSJT-X/ALL.TXT') as fh:
         all_lines = fh.readlines()
         tail = all_lines[(-1 * n_lines):]
@@ -67,9 +68,10 @@ def tail_once(n_lines=100):
             call_sign = extract_call_sign(line)
             loc = call2loc(call_sign)
             flags = flag_str(line, loc)
-            print(flags, line.rstrip().ljust(max_len + 1), loc)
-    print()
+            text_block += flags + ' ' + line.rstrip().ljust(max_len + 1) + str(loc) + '\n'
+    text_block += '\n'
+    return text_block
 
 while True:
-    tail_once(n_lines=20)
+    print(tail_once(n_lines=20))
     sleep(2)
